@@ -2,47 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aranzman;
 use Illuminate\Http\Request;
 
 class AranzmanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Aranzman::with('destinacija')->get(), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'naziv_aranzmana' => 'required|string',
+            'cena' => 'required|numeric',
+            'last_minute' => 'boolean',
+            'popust' => 'integer',
+            'destinacija_id' => 'required|exists:destinacije,id',
+        ]);
+
+        $aranzman = Aranzman::create($validated);
+        return response()->json($aranzman, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Aranzman $aranzman)
     {
-        //
+        return response()->json($aranzman->load('destinacija'), 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Aranzman $aranzman)
     {
-        //
+        $validated = $request->validate([
+            'naziv_aranzmana' => 'string',
+            'cena' => 'numeric',
+            'last_minute' => 'boolean',
+            'popust' => 'integer',
+            'destinacija_id' => 'exists:destinacije,id',
+        ]);
+
+        $aranzman->update($validated);
+        return response()->json($aranzman, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Aranzman $aranzman)
     {
-        //
+        $aranzman->delete();
+        return response()->json(['message' => 'Aranzman obrisan'], 200);
     }
 }
+
