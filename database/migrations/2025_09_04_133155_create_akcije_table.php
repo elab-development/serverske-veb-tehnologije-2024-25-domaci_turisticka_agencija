@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('akcije', function (Blueprint $table) {
         $table->id();
         $table->string('naziv');
-        $table->integer('popust')->default(0); // popust u procentima
+        $table->integer('popust')->default(0);
         $table->foreignId('aranzman_id')->constrained('aranzmani')->onDelete('cascade');
         $table->timestamps();
     });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('akcijas');
+        Schema::dropIfExists('akcije');
     }
 };

@@ -9,14 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+  public function up(): void
 {
     Schema::create('aranzmani', function (Blueprint $table) {
         $table->id();
-        $table->string('naziv');
+        $table->string('naziv_aranzmana');
         $table->decimal('cena', 10, 2);
-        $table->integer('trajanje_dana');
         $table->boolean('last_minute')->default(false);
+        $table->integer('popust')->default(0);
         $table->foreignId('destinacija_id')->constrained('destinacije')->onDelete('cascade');
         $table->timestamps();
     });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('aranzmen');
+        Schema::dropIfExists('destinacije');
     }
 };
