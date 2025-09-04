@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telefon',
     ];
 
     /**
@@ -44,5 +45,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Jedan korisnik može imati više rezervacija
+     */
+    public function rezervacije()
+    {
+        return $this->hasMany(Rezervacija::class);
     }
 }

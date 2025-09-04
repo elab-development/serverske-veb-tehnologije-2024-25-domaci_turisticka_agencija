@@ -17,7 +17,10 @@ class Aranzman extends Model
     {
         return $this->belongsTo(Destinacija::class);
     }
-
+public function rezervacije()
+{
+    return $this->hasMany(Rezervacija::class);
+}
     public function akcije()
     {
         return $this->hasMany(Akcija::class);
