@@ -4,17 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Aranzman;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AranzmanController;
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/aranzmani', [AranzmanController::class, 'store']);
-    Route::put('/aranzmani/{aranzman}', [AranzmanController::class, 'update']);
-    Route::delete('/aranzmani/{aranzman}', [AranzmanController::class, 'destroy']);
-});
-
-Route::get('/aranzmani', [AranzmanController::class, 'index']);
-Route::get('/aranzmani/{aranzman}', [AranzmanController::class, 'show']);
-
 
 class AranzmanController extends Controller
 {
@@ -62,4 +51,3 @@ class AranzmanController extends Controller
         return response()->json(['message' => 'Aranzman obrisan'], 200);
     }
 }
-
