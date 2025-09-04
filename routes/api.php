@@ -10,7 +10,6 @@ use App\Http\Controllers\AuthController;
 // ===================
 // Auth rute
 // ===================
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
@@ -19,18 +18,22 @@ Route::post('login', [AuthController::class, 'login']);
 // ===================
 Route::middleware('auth:sanctum')->group(function () {
 
-    
     // Logout
     Route::post('logout', [AuthController::class, 'logout']);
+
+    // Informacije o korisniku
+    Route::get('/user', function (Request $request) {
+        return response()->json($request->user());
+    });
 
     // CRUD Aranzmani
     Route::apiResource('aranzmani', AranzmanController::class);
 
-    // CRUD Destinacije (samo za create/update/delete)
+    // CRUD Destinacije (samo create/update/delete)
     Route::apiResource('destinacije', DestinacijaController::class)
-        ->only(['store','update','destroy']);
+        ->only(['store', 'update', 'destroy']);
 
-    // CRUD Akcije (bez index, jer je javno)
+    // CRUD Akcije (bez index)
     Route::apiResource('akcije', AkcijaController::class)
         ->except(['index']);
 });
@@ -51,11 +54,7 @@ Route::get('destinacije', [DestinacijaController::class, 'index']);
 // Akcije
 Route::get('akcije', [AkcijaController::class, 'index']);
 
-// Informacije o korisniku (samo autentifikovani)
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
+// Ping za testiranje API konekcije
 Route::get('ping', function () {
     return response()->json(['message' => 'pong']);
 });
