@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json($request->user());
     });
 
-    // CRUD Aranzmani
+    // CRUD Aranzmani (bez index/show)
     Route::apiResource('aranzmani', AranzmanController::class)->except(['index', 'show']);
 
     // CRUD Destinacije (samo create/update/delete)
@@ -37,20 +37,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // CRUD Akcije (bez index)
     Route::apiResource('akcije', AkcijaController::class)->except(['index']);
 
-    // CRUD Rezervacije (samo ulogovani korisnik može da manipuliše sopstvenim rezervacijama)
+    // CRUD Rezervacije (samo ulogovani korisnik)
     Route::apiResource('rezervacije', RezervacijaController::class);
 });
 
 // ===================
-// Javne rute (dostupne svima)
+// Javne rute (samo pregled)
 // ===================
 
-// Aranzmani (samo pregled)
-Route::get('aranzmani', [AranzmanController::class, 'index']);
-Route::get('aranzmani/{aranzman}', [AranzmanController::class, 'show']);
-Route::get('aranzmani/filter', [AranzmanController::class, 'filter']);
-Route::get('aranzmani/lastminute', [AranzmanController::class, 'lastMinute']);
-Route::get('aranzmani/akcije', [AranzmanController::class, 'withAkcije']);
+// Specijalne GET rute - MORAJU ići pre rute sa {aranzman}
+Route::prefix('aranzmani')->group(function () {
+    Route::get('filter', [AranzmanController::class, 'filter']);       // filtriranje
+    Route::get('lastminute', [AranzmanController::class, 'lastMinute']); // last minute aranžmani
+    Route::get('akcije', [AranzmanController::class, 'withAkcije']);     // aranžmani sa akcijama
+    Route::get('search', [AranzmanController::class, 'search']);         // pretraga po nazivu i destinaciji
+
+    // Standardne GET rute
+    Route::get('/', [AranzmanController::class, 'index']);               // svi aranžmani (paginacija)
+    Route::get('{aranzman}', [AranzmanController::class, 'show'])
+        ->where('aranzman', '[0-9]+');                                  // samo numerički ID prolazi
+});
 
 // Destinacije (samo pregled)
 Route::get('destinacije', [DestinacijaController::class, 'index']);

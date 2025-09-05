@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 
 class AranzmanController extends Controller
 {
-    public function index()
-    {
-        return response()->json(Aranzman::with('destinacija')->get(), 200);
-    }
+ public function index(Request $request)
+{
+    $aranzmani = Aranzman::paginate(5);
+
+        return response()->json($aranzmani);
+}
+
 
     public function store(Request $request)
     {
@@ -33,6 +36,23 @@ class AranzmanController extends Controller
     public function show(Aranzman $aranzman)
     {
         return response()->json($aranzman->load('destinacija'), 200);
+    }
+
+     public function search(Request $request)
+    {
+        $query = Aranzman::with('destinacija');
+
+        if ($request->has('naziv')) {
+            $query->where('naziv', 'like', '%' . $request->naziv . '%');
+        }
+
+        if ($request->has('destinacija')) {
+            $query->whereHas('destinacija', function ($q) use ($request) {
+                $q->where('naziv', 'like', '%' . $request->destinacija . '%');
+            });
+        }
+
+        return response()->json($query->get());
     }
 
 public function filter(Request $request)
