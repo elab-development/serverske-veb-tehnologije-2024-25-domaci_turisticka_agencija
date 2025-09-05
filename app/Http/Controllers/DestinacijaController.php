@@ -3,46 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Destinacija;
 
 class DestinacijaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Prikaz svih destinacija (javna ruta)
     public function index()
     {
-        //
+        $destinacije = Destinacija::all();
+        return response()->json($destinacije);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Kreiranje nove destinacije (autentifikovani korisnici)
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'naziv' => 'required|string|max:255',
+            'drzava' => 'required|string|max:255',
+            'opis' => 'nullable|string',
+        ]);
+
+        $destinacija = Destinacija::create($validated);
+
+        return response()->json([
+            'message' => 'Destinacija uspešno kreirana',
+            'destinacija' => $destinacija
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Prikaz jedne destinacije (opcionalno, može se koristiti u javnim rutama)
+    public function show($id)
     {
-        //
+        $destinacija = Destinacija::findOrFail($id);
+        return response()->json($destinacija);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Ažuriranje destinacije (autentifikovani korisnici)
+    public function update(Request $request, $id)
     {
-        //
+        $destinacija = Destinacija::findOrFail($id);
+
+        $validated = $request->validate([
+            'naziv' => 'sometimes|required|string|max:255',
+            'drzava' => 'sometimes|required|string|max:255',
+            'opis' => 'nullable|string',
+        ]);
+
+        $destinacija->update($validated);
+
+        return response()->json([
+            'message' => 'Destinacija uspešno ažurirana',
+            'destinacija' => $destinacija
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Brisanje destinacije (autentifikovani korisnici)
+    public function destroy($id)
     {
-        //
+        $destinacija = Destinacija::findOrFail($id);
+        $destinacija->delete();
+
+        return response()->json([
+            'message' => 'Destinacija uspešno obrisana'
+        ]);
     }
 }

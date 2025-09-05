@@ -9,6 +9,7 @@ class Akcija extends Model
 {
     use HasFactory;
 
+    protected $table = 'akcije'; // tačan naziv tabele u bazi
     protected $fillable = ['naziv', 'popust', 'aranzman_id'];
 
     public function aranzman()

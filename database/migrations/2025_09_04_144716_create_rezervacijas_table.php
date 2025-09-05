@@ -13,8 +13,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('aranzman_id')->constrained('aranzmani')->cascadeOnDelete();
             $table->date('datum_rezervacije');
-            $table->integer('broj_osoba');
+            $table->unsignedInteger('broj_osoba');
             $table->decimal('ukupna_cena', 10, 2)->nullable();
+            $table->enum('status', ['na_cekanju', 'potvrdjena', 'otkazana'])->default('na_cekanju');
             $table->timestamps();
         });
     }

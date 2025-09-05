@@ -9,7 +9,7 @@ class Rezervacija extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+     protected $fillable = [
         'user_id',
         'aranzman_id',
         'datum_rezervacije',
