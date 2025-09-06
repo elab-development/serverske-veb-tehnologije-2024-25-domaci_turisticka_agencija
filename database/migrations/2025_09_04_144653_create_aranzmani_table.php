@@ -9,11 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('aranzmani', function (Blueprint $table) {
-            $table->id(); // BIGINT UNSIGNED (auto increment)
+            $table->id();
             $table->string('naziv');
-            $table->text('opis')->nullable(); // kolona koja se kasnije može obrisati
-            $table->decimal('cena', 10, 2)->unsigned(); // cena ne može biti negativna
-            $table->decimal('popust', 5, 2)->nullable(); // npr. 10.50 (%)
+            $table->text('opis')->nullable();
+            $table->decimal('cena', 10, 2)->unsigned();
+            $table->decimal('popust', 5, 2)->nullable();
             $table->date('pocetak');
             $table->date('kraj');
             $table->integer('broj_mesta')->unsigned();

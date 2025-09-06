@@ -22,16 +22,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Logout
     Route::post('logout', [AuthController::class, 'logout']);
 
-    // Informacije o trenutno ulogovanom korisniku
-    Route::get('/user', function (Request $request) {
-        return response()->json($request->user());
-    });
+    // Trenutni korisnik
+    Route::get('/user', fn(Request $request) => response()->json($request->user()));
 
     // Promena lozinke
     Route::post('/user/change-password', [AuthController::class, 'changePassword']);
 
-    // CRUD Aranzmani (bez index/show)
+    // CRUD Aranzmani (bez index/show) + upload + export CSV
     Route::apiResource('aranzmani', AranzmanController::class)->except(['index', 'show']);
+    Route::post('aranzmani/upload', [AranzmanController::class, 'upload']); // opcionalno, ako upload posebno
+    Route::get('aranzmani/export/csv', [AranzmanController::class, 'exportCsv']);
 
     // CRUD Destinacije (samo create/update/delete)
     Route::apiResource('destinacije', DestinacijaController::class)
@@ -40,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // CRUD Akcije (bez index)
     Route::apiResource('akcije', AkcijaController::class)->except(['index']);
 
-    // CRUD Rezervacije (samo ulogovani korisnik)
+    // CRUD Rezervacije
     Route::apiResource('rezervacije', RezervacijaController::class);
 });
 
@@ -50,25 +50,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Aranzmani
 Route::prefix('aranzmani')->group(function () {
-    Route::get('filter', [AranzmanController::class, 'filter']);          // filtriranje
-    Route::get('lastminute', [AranzmanController::class, 'lastMinute']);  // last minute aranžmani
-    Route::get('akcije', [AranzmanController::class, 'withAkcije']);      // aranžmani sa akcijama
-    Route::get('search', [AranzmanController::class, 'search']);          // pretraga po nazivu i destinaciji
-
-    // Standardne GET rute
-    Route::get('/', [AranzmanController::class, 'index']);                // svi aranžmani (paginacija)
+    Route::get('filter', [AranzmanController::class, 'filter']);
+    Route::get('lastminute', [AranzmanController::class, 'lastMinute']);
+    Route::get('akcije', [AranzmanController::class, 'withAkcije']);
+    Route::get('search', [AranzmanController::class, 'search']);
+    Route::get('/', [AranzmanController::class, 'index']);
     Route::get('{aranzman}', [AranzmanController::class, 'show'])
-        ->where('aranzman', '[0-9]+');                                   // samo numerički ID prolazi
+        ->where('aranzman', '[0-9]+');
 });
 
 // Destinacije
-Route::get('destinacije', [DestinacijaController::class, 'index']);       // pregled svih destinacija
-Route::get('destinacije/{id}/weather', [DestinacijaController::class, 'weather']); // weather za destinaciju
+Route::get('destinacije', [DestinacijaController::class, 'index']);
+Route::get('destinacije/{id}/weather', [DestinacijaController::class, 'weather']);
 
 // Akcije
-Route::get('akcije', [AkcijaController::class, 'index']);                 // pregled svih akcija
+Route::get('akcije', [AkcijaController::class, 'index']);
 
-// Ping za testiranje API konekcije
-Route::get('ping', function () {
-    return response()->json(['message' => 'pong']);
-});
+// Ping
+Route::get('ping', fn() => response()->json(['message' => 'pong']));

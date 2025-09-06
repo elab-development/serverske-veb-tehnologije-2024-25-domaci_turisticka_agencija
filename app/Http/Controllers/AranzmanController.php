@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aranzman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class AranzmanController extends Controller
 {
@@ -17,20 +18,25 @@ class AranzmanController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'naziv' => 'required|string',
+      $validated = $request->validate([
+        'naziv' => 'required|string|max:255',
         'opis' => 'nullable|string',
         'cena' => 'required|numeric',
         'popust' => 'nullable|numeric',
         'pocetak' => 'required|date',
-        'kraj' => 'required|date|after_or_equal:pocetak',
-        'broj_mesta' => 'required|integer|min:1',
-        'destinacija_id' => 'required|exists:destinacijas,id',
-        'last_minute' => 'nullable|boolean',
-        ]);
+        'kraj' => 'required|date',
+        'broj_mesta' => 'required|integer',
+        'destinacija_id' => 'required|exists:destinacije,id',
+        'slika' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // validacija fajla
+    ]);
 
-        $aranzman = Aranzman::create($validated);
-        return response()->json($aranzman, 201);
+    if ($request->hasFile('slika')) {
+        $path = $request->file('slika')->store('aranzmani', 'public');
+        $validated['slika'] = $path;
+    }
+
+    $aranzman = Aranzman::create($validated);
+    return response()->json($aranzman, 201);
     }
 
     public function show(Aranzman $aranzman)
@@ -54,6 +60,37 @@ class AranzmanController extends Controller
 
         return response()->json($query->get());
     }
+
+public function exportCsv()
+{
+    $aranzmani = Aranzman::all();
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="aranzmani.csv"',
+    ];
+
+    $callback = function() use ($aranzmani) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, ['ID', 'Naziv', 'Opis', 'Cena', 'Popust', 'Pocetak', 'Kraj', 'Broj mesta', 'Destinacija']);
+        foreach ($aranzmani as $a) {
+            fputcsv($file, [
+                $a->id,
+                $a->naziv,
+                $a->opis,
+                $a->cena,
+                $a->popust,
+                $a->pocetak,
+                $a->kraj,
+                $a->broj_mesta,
+                $a->destinacija_id,
+            ]);
+        }
+        fclose($file);
+    };
+
+    return Response::stream($callback, 200, $headers);
+}
 
 public function filter(Request $request)
 {
