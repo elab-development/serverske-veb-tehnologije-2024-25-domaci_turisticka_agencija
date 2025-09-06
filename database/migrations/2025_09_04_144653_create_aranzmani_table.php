@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('kraj');
             $table->integer('broj_mesta')->unsigned();
             $table->foreignId('destinacija_id')
-                  ->constrained('destinacijas')
+                  ->constrained('destinacije')
                   ->cascadeOnDelete();
             $table->timestamps();
         });

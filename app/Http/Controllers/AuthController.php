@@ -54,6 +54,27 @@ class AuthController extends Controller
             'token' => $token
         ], 200);
     }
+    public function changePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => 'required|string|min:6|confirmed', // potvrda u polju new_password_confirmation
+    ]);
+
+    $user = $request->user();
+
+    // Provera trenutne lozinke
+    if (!\Hash::check($request->current_password, $user->password)) {
+        return response()->json(['message' => 'Trenutna lozinka nije tačna.'], 403);
+    }
+
+    // Promena lozinke
+    $user->password = \Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json(['message' => 'Lozinka uspešno promenjena.']);
+}
+
 
     // Logout korisnika
     public function logout(Request $request)

@@ -27,6 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json($request->user());
     });
 
+    // Promena lozinke
+    Route::post('/user/change-password', [AuthController::class, 'changePassword']);
+
     // CRUD Aranzmani (bez index/show)
     Route::apiResource('aranzmani', AranzmanController::class)->except(['index', 'show']);
 
@@ -45,24 +48,25 @@ Route::middleware('auth:sanctum')->group(function () {
 // Javne rute (samo pregled)
 // ===================
 
-// Specijalne GET rute - MORAJU ići pre rute sa {aranzman}
+// Aranzmani
 Route::prefix('aranzmani')->group(function () {
-    Route::get('filter', [AranzmanController::class, 'filter']);       // filtriranje
-    Route::get('lastminute', [AranzmanController::class, 'lastMinute']); // last minute aranžmani
-    Route::get('akcije', [AranzmanController::class, 'withAkcije']);     // aranžmani sa akcijama
-    Route::get('search', [AranzmanController::class, 'search']);         // pretraga po nazivu i destinaciji
+    Route::get('filter', [AranzmanController::class, 'filter']);          // filtriranje
+    Route::get('lastminute', [AranzmanController::class, 'lastMinute']);  // last minute aranžmani
+    Route::get('akcije', [AranzmanController::class, 'withAkcije']);      // aranžmani sa akcijama
+    Route::get('search', [AranzmanController::class, 'search']);          // pretraga po nazivu i destinaciji
 
     // Standardne GET rute
-    Route::get('/', [AranzmanController::class, 'index']);               // svi aranžmani (paginacija)
+    Route::get('/', [AranzmanController::class, 'index']);                // svi aranžmani (paginacija)
     Route::get('{aranzman}', [AranzmanController::class, 'show'])
-        ->where('aranzman', '[0-9]+');                                  // samo numerički ID prolazi
+        ->where('aranzman', '[0-9]+');                                   // samo numerički ID prolazi
 });
 
-// Destinacije (samo pregled)
-Route::get('destinacije', [DestinacijaController::class, 'index']);
+// Destinacije
+Route::get('destinacije', [DestinacijaController::class, 'index']);       // pregled svih destinacija
+Route::get('destinacije/{id}/weather', [DestinacijaController::class, 'weather']); // weather za destinaciju
 
-// Akcije (samo pregled)
-Route::get('akcije', [AkcijaController::class, 'index']);
+// Akcije
+Route::get('akcije', [AkcijaController::class, 'index']);                 // pregled svih akcija
 
 // Ping za testiranje API konekcije
 Route::get('ping', function () {

@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('aranzmani', function (Blueprint $table) {
-            //
+            $table->decimal('popust', 4, 2)->default(0)->change(); 
+            // menjamo popust da bude NOT NULL sa default vrednošću 0
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('aranzmani', function (Blueprint $table) {
-            //
+            $table->decimal('popust', 5, 2)->nullable()->change(); 
+            // vraćamo na staro stanje
         });
     }
 };

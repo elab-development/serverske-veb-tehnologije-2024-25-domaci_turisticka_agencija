@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('destinacije', function (Blueprint $table) { // <-- promenjeno ime tabele
+        Schema::create('destinacije', function (Blueprint $table) {
             $table->id();
             $table->string('naziv');
             $table->string('drzava');
@@ -19,7 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('destinacije'); // <-- promenjeno ime tabele
+        Schema::dropIfExists('destinacije');
     }
 };
-
