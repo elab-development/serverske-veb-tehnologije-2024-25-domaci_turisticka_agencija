@@ -1,61 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Turistička Agencija – Seminarski Rad
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**GitHub:** https://github.com/elab-development/serverske-veb-tehnologije-2024-25-domaci_turisticka_agencija/tree/Domaci_Turisticka_Agencija-2
 
-## About Laravel
+##  Uvod
+Ovo je backend REST API aplikacija za turističku agenciju, izrađena u okviru seminarskog rada iz predmeta *Serverske Veb Tehnologije*. Aplikacija omogućava registraciju korisnika, pregled i upravljanje destinacijama, aranžmanima, rezervacijama i promocijama (akcijama). Koristi Laravel framework.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+##  Tehnološki Stack
+- PHP 8.x, Laravel 10.x  
+- MySQL baza podataka  
+- Laravel Sanctum za autentifikaciju (token-based)  
+- Storage (uploads) i export CSV  
+- Vanjski REST API: OpenWeather za vremensku prognozu
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+##  Pokretanje projekta
+1. Klonirajte repozitorijum:
+   ```bash
+   git clone https://github.com/elab-development/serverske-veb-tehnologije-2024-25-domaci_turisticka_agencija.git
+   cd serverske-veb-tehnologije-2024-25-domaci_turisticka_agencija
+   git checkout Domaci_Turisticka_Agencija-2
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Instalirajte zavisnosti:
 
-## Learning Laravel
+composer install
+cp .env.example .env
+php artisan key:generate
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Podesite .env (DB, OpenWeather API ključ)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Pokrenite migracije i seed:
 
-## Laravel Sponsors
+php artisan migrate --seed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+Pokrenite lokalni server:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+php artisan serve
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Dostupno na http://127.0.0.1:8000
 
-## Code of Conduct
+Korisničke uloge
+Uloga	Ovlašćenja
+Gost	Pregled promocija, destinacija, aranžmana
+Registrovan korisnik	Može praviti rezervacije
+Admin	Full CRUD nad korisnicima, destinacijama, etc.
+API Endpoints
+Autentifikacija
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+POST /api/register – Registracija
 
-## Security Vulnerabilities
+POST /api/login – Prijavljivanje
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+POST /api/logout – Odjava (token-based)
 
-## License
+Promena lozinke
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+POST /api/user/change-password (autorizovano)
+
+Destinacije
+
+GET /api/destinacije – Sve destinacije
+
+POST /api/destinacije – Dodavanje (admin)
+
+PUT /api/destinacije/{id} – Ažuriranje (admin)
+
+DELETE /api/destinacije/{id} – Brisanje (admin)
+
+GET /api/destinacije/{id}/weather – Vremenska prognoza (OpenWeather)
+
+Aranžmani
+
+GET /api/aranzmani – Prikaz (paginacija)
+
+GET /api/aranzmani/search?..., /filter, /lastminute, /akcije – Napredna pretraga/filteri
+
+POST /api/aranzmani – Kreiranje (admin)
+
+PUT /api/aranzmani/{id}, DELETE /api/aranzmani/{id} – Administracija
+
+Upload fajlova (slike aranžmana)
+
+Uslov u store metodi za aranžmane (slika polje u form-data)
+
+Export podataka
+
+GET /api/aranzmani/export/csv – Export svih aranžmana u CSV (admin)
+
+Rezervacije (ulogovani korisnik)
+
+GET /api/rezervacije, POST /api/rezervacije, PUT /api/rezervacije/{id}, DELETE /api/rezervacije/{id}
+
+Akcije (promocije)
+
+GET /api/akcije – Pregled svih promocija
+
+CRUD dostupno samo adminu: POST, PUT, DELETE
+
+Ping test
+
+GET /api/ping → „pong“
+
+Dodatne funkcionalnosti
+
+Paginacija, pretraga, filteri, upload fajlova, export, keširanje
+
+Turistička prognoza preko OpenWeather API
+
+(Predloženo) Currency API za konverziju cena između EUR/RSD – može implementiratiš ako želiš još jedan javni API
+
+Sigurnosne mere
+
+bcrypt za lozinke
+
+Kamin za rate limiting (throttle:api)
+
+Validacije polja sa povratnim JSON porukama
+
+Uputstvo za testiranje (Postman)
+
+Register → Login → preuzmi token
+
+Dodaj Authorization: Bearer {token}
+
+Test REST API: destinacije, aranžmani, rezervacije, akcije (admin)
+
+Test upload (form-data + fajl)
+
+Test export — CSV fajl odgovara listi aranžmana
+
+Test weather endpoint
+
+Git & Komitovi
+
+Minimum 20 smislenih komitova, uključujući i domaće zadatke
+
+Projekat je javnosti dostupan (public repo)
+
+Autor
+
+Ime i prezime: Marko Stamenković
+
+Seminarski rad – jesen 2025.
